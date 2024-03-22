@@ -51,11 +51,16 @@ app:
             video/mpeg,
             audio/ogg,
             video/ogg,
-            application/msword,
             application/ogg,
             application/pdf,
+            application/vnd.ms-powerpoint,
+            image/png,
             image/tiff,
-            application/vnd.ms-excel",
+            application/vnd.ms-excel,
+            application/zip,
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document,
             application/vnd.openxmlformats-officedocument.presentationml.presentation,
             text/plain
             
