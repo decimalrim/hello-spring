@@ -1,19 +1,39 @@
 package com.hello.forum.beans;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.tika.Tika;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatch;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 
 public class FileHandler {
 	
 	private String baseDir;
 	private boolean enableObfuscation;
 	private boolean enableObfuscationHideExt;
+	private boolean enableAvailableFileList;
 	private List<String> availableFileList;
+	private String handler;
+	
 	
 	public void setBaseDir(String baseDir) {
 		this.baseDir = baseDir;
@@ -27,10 +47,19 @@ public class FileHandler {
 		this.enableObfuscationHideExt = enableObfuscationHideExt;
 	}
 	
+	public void setEnableAvailableFileList(boolean enableAvailableFileList) {
+		this.enableAvailableFileList = enableAvailableFileList;
+	}
+	
 	public void setAvailableFileList(List<String> availableFileList) {
 		this.availableFileList = availableFileList;
 	}
 	
+	public void setHandler(String handler) {
+		this.handler = handler;
+	}
+
+
 	/**
 	 * 사용자가 업로드한 파일을 서버에 저장한다.
 	 * @param multipartFile 사용자가 업로드 한 파일 (Spring 에서 사용자가 업로드한 파일은 MultipartFile로 받아올 수 있다. )
@@ -64,22 +93,44 @@ public class FileHandler {
 			return null;
 		}
 		
+		if (this.enableAvailableFileList) {
 		// 업로드된 파일의 마임타입을 가져온다.
-		Tika tika = new Tika();
-		try {
-			String mimeType = tika.detect(storePath);
-			if (! this.availableFileList.contains(mimeType)) {
-				System.out.println(mimeType + " 파일은 업로드 할 수 없습니다. ");
+			// jMimeMagic Code (느리지만 정확하다 but 최신x 위험성o)
+		String mimeType = null;
+		
+		if (this.handler.equalsIgnoreCase("tika")) {
+			Tika tika = new Tika();
+			try {
+				mimeType = tika.detect(storePath);
+			} catch (IOException e) {
+				System.out.println(mimeType + "파일은 업로드 할 수 없습니다.");
 				storePath.delete();
+				e.printStackTrace();
 				return null;
 			}
 			
-			System.out.println(mimeType + " 파일을 업로드 했습니다.");
-		} catch (IOException e) {
-			e.printStackTrace();
+		} else if (this.handler.equalsIgnoreCase("jMimeMagic")) {
+			Path path = Paths.get(storePath.getAbsolutePath());
+			try {
+				byte[] data = Files.readAllBytes(path);
+				MagicMatch match = Magic.getMagicMatch(data);
+				mimeType = match.getMimeType();
+			} catch (IOException | MagicParseException | MagicMatchNotFoundException | MagicException e) {
+				System.out.println(mimeType + "파일은 업로드 할 수 없습니다.");
+				storePath.delete();
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		if (! this.availableFileList.contains(mimeType)) {
+			storePath.delete();
+			System.out.println(mimeType + "파일을 업로드했습니다.");
 			return null;
 		}
 		
+		System.out.println(mimeType + "파일을 업로드했습니다.");	
+	}	
 		
 		// 업로드 결과를 반환한다.
 		return new StoredFile(multipartFile.getOriginalFilename(), storePath);
@@ -128,8 +179,62 @@ public class FileHandler {
 		
 		return fileName;
 	}
+	
+	/**
+	 * 첨부된 파일을 삭제한다.
+	 * @param storedFileName 삭제할 파일의 이름
+	 */
+	public void deleteFileByFileName(String storedFileName) {	
+		
+		File file = new File(this.baseDir, storedFileName);
+		if (file.exists() && file.isFile()) {
+			file.delete();
+		}
+	}
+	
+	/**
+	 * 서버에 저장된 파일을 사용자에게 다운로드 한다.
+	 * @param originFileName 사용자가 다운로드 받을 파일의 이름 (원본 명)
+	 * @param fileName 사용자에게 다운로드 해줄 서버에 저장된 파일의 이름 (난독화)
+	 * @return 다운로드 스트링
+	 */
+	public ResponseEntity<Resource> download(String originFileName, String fileName) {
+		
+		// 사용자에게 다운로드 할 파일을 가져온다.
+		File downloadFile = new File(this.baseDir, fileName);
+		
+		// 사용자에게 다운로드 할 파일의 이름을 셋팅한다.
+		// MS, Linux, Mac, 브라우저 별로 셋팅이 달라진다.
+		
+		// 동작중인 서버가 Windows 일 경우, 파일의 이름을 Windows 전용 인코딩으로 변경해야한다.
+		String newFileName = originFileName;
+		try {
+			newFileName = new String(originFileName.getBytes("UTF-8"), "ISO-8859-1");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		HttpHeaders header = new HttpHeaders();
+		header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + newFileName);
+		
+		// 사용자에게 다운로드 할 준비를 진행한다.
+		InputStreamResource resource;
+		try {
+			resource = new InputStreamResource(new FileInputStream(downloadFile));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
+		}
+		
+		// 사용자에게 다운로드 해준다.
+		return ResponseEntity.ok()
+							.headers(header)
+							.contentLength(downloadFile.length())
+							.contentType(MediaType.parseMediaType("application/download"))
+							.body(resource);
+	}
 
-
+	
 	public class StoredFile {
 		private String fileName;
 		private String realFileName;
@@ -151,6 +256,11 @@ public class FileHandler {
 			return realFileName;
 		}
 	}
+
+
+
+
+
 
 	
 	

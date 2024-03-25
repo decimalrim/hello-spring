@@ -106,13 +106,57 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public boolean updateOneBoard(BoardVO boardVO) {
+	public boolean updateOneBoard(BoardVO boardVO, MultipartFile file) {
+		
+		// 사용자가 파일을 업로드했는지 확인
+		if (file != null && ! file.isEmpty()) {
+			// 기존의 게시글 내용을 확인
+			// 사용자가 파일을 업로드 한 경우, 기존에 업로드되었던 파일을 삭제하기 위해서!
+			// 기존에 첨부된 파일의 존재여부를 확인해야한다.
+			BoardVO originalBoardVO = this.boardDao.selectOneBoard(boardVO.getId());
+			
+			// 기존 게시글에 첨부된 파일이 있는지 확인.
+			if (originalBoardVO != null) {
+				
+				// 기존 게시글에 첨부된 파일의 이름을 받아욘다.
+				String storedFileName = originalBoardVO.getFileName();
+				// 첨부된 파일의 이름이 있는지 확인한다.
+				// 만약 첨부된 파일의 이름이 있다면, 이 게시글은 파일이 첨부되었던 게시글이다.
+				if (storedFileName != null && storedFileName.length() > 0) {
+					// 첨부된 파일을 삭제한다.
+					this.fileHandler.deleteFileByFileName(storedFileName);
+				}
+			}
+			// 사용자가 업로드한 파일을 서버에 저장한다.
+			StoredFile storedFile = this.fileHandler.storeFile(file);
+			boardVO.setFileName(storedFile.getRealFileName());
+			boardVO.setOriginFileName(storedFile.getFileName());
+		}
+		
 		int updatedCount = this.boardDao.updateOneBoard(boardVO);
 		return updatedCount > 0;
 	}
 
 	@Override
 	public boolean deleteOneBoard(int id) {
+		// 기존의 게시글 내용을 확인
+		// 사용자가 파일을 업로드 한 경우, 기존에 업로드되었던 파일을 삭제하기 위해서!
+		// 기존에 첨부된 파일의 존재여부를 확인해야한다.
+		BoardVO originalBoardVO = this.boardDao.selectOneBoard(id);
+					
+		// 기존 게시글에 첨부된 파일이 있는지 확인.
+		if (originalBoardVO != null) {
+						
+		// 기존 게시글에 첨부된 파일의 이름을 받아욘다.
+		String storedFileName = originalBoardVO.getFileName();
+		// 첨부된 파일의 이름이 있는지 확인한다.
+		// 만약 첨부된 파일의 이름이 있다면, 이 게시글은 파일이 첨부되었던 게시글이다.
+		if (storedFileName != null && storedFileName.length() > 0) {
+			// 첨부된 파일을 삭제한다.
+			this.fileHandler.deleteFileByFileName(storedFileName);
+			}
+		}
+		
 		int deletedCount = this.boardDao.deleteOneBoard(id);
 		return deletedCount > 0;
 	}

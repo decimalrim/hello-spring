@@ -2,6 +2,8 @@ package com.hello.forum.bbs.dao;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.hello.forum.bbs.vo.BoardVO;
 
 public interface BoardDao {
@@ -45,7 +47,7 @@ public interface BoardDao {
 	/**
 	 * 전달받은 파라미터로 게시글 정보를 수정한다.
 	 * 게시글이 수정될 때, 수정날짜도 변경이 된다.
-	 * @param boardVO 사용자가 입력한 병경될 게시글의 정보
+	 * @param boardVO 사용자가 입력한 변경될 게시글의 정보
 	 * @return 업데이트 영향을 받은 데이터의 건수
 	 */
 	public int updateOneBoard(BoardVO boardVO);

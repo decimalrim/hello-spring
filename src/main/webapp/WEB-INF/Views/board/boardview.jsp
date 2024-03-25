@@ -13,7 +13,7 @@
     div.grid {
         display: grid;
         grid-template-columns: 80px 1fr;
-        grid-template-rows: 28px 28px 28px 28px 28px 320px 1fr;
+        grid-template-rows: 28px 28px 28px 28px 28px 28px 28px 320px 1fr;
         row-gap: 10px;
     }
     div.grid > div.btn-group {
@@ -59,6 +59,13 @@
 
         <label for="viewCnt">조회수</label>
         <div>${boardVO.viewCnt}</div>
+
+        <label for="viewCnt">첨부파일</label>
+        <div>
+            <a href="/board/file/download/${boardVO.id}">
+            ${boardVO.originFileName}
+          </a>
+        </div>
 
         <label for="crtDt">등록일</label>
         <div>${boardVO.crtDt}</div>
