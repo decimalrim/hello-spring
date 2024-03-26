@@ -4,15 +4,15 @@ package com.hello.forum.utils;
  * 유틸리티들은 추상클래스로 만들어 인스턴스화 못하게 한다.
  */
 public abstract class StringUtils {
-	
+
 	/**
-	 * 생성자를 private로 숨겨서 익명클래스도 못만들게 막는다.
+	 * 생성자를 private으로 숨겨서 익명클래스도 못만들게 막는다.
 	 */
 	private StringUtils() {
 		
 	}
-
-	public static boolean correctPasswordFormat(final String str) {
+	
+	public final static boolean correctPasswordFormat(final String str) {
 		if (isEmpty(str)) {
 			return false;
 		}
@@ -21,13 +21,13 @@ public abstract class StringUtils {
 		return str.matches(passwordFormat);
 	}
 	
-	public static String replaceTagSymbols(final String str) {
+	public final static String replaceTagSymbols(final String str) {
 		return nullToValue(str, "").replace(">", "&gt;")
 					.replace("<", "&lt;")
 					.replace(" ", "&nbsp;");
 	}
 	
-	public static String nullToValue(final String str, final String nullValue) {
+	public final static String nullToValue(final String str, final String nullValue) {
 		if (isEmpty(str)) {
 			return nullValue;
 		}
@@ -35,11 +35,11 @@ public abstract class StringUtils {
 		return str;
 	}
 	
-	public static boolean isEmpty(final String str) {
+	public final static boolean isEmpty(final String str) {
 		return str == null || str.trim().length() == 0;
 	}
 	
-	public static boolean isEnough(final String str, final int minLength) {
+	public final static boolean isEnough(final String str, final int minLength) {
 		if (isEmpty(str)) {
 			return false;
 		}
@@ -47,7 +47,7 @@ public abstract class StringUtils {
 		return trim(str).length() >= minLength;
 	}
 	
-	public static String trim(final String str) {
+	public final static String trim(final String str) {
 		if (isEmpty(str)) {
 			return null;
 		}
@@ -55,7 +55,7 @@ public abstract class StringUtils {
 		return str.trim();
 	}
 	
-	public static boolean isEmailFormat(final String str) {
+	public final static boolean isEmailFormat(final String str) {
 		if (isEmpty(str)) {
 			return false;
 		}
@@ -64,7 +64,7 @@ public abstract class StringUtils {
 		return str.matches(emailPattern);
 	}
 	
-	public static boolean isPhoneFormat(final String str) {
+	public final static boolean isPhoneFormat(final String str) {
 		if (isEmpty(str)) {
 			return false;
 		}

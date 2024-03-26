@@ -75,7 +75,7 @@ public class CustomBeanInitializer {
 	 * 메소드의 이름이 Bean객체의 이름이 된다.
 	 * @return
 	 */
-	@Bean 
+	@Bean
 	FileHandler fileHandler() { // @Bean을 쓸때에는 public을 쓰지 않는다.
 		
 		FileHandler fileHandler = new FileHandler();
@@ -86,6 +86,11 @@ public class CustomBeanInitializer {
 		fileHandler.setEnableAvailableFileList(this.enableAvailableFileList);
 		fileHandler.setHandler(this.fileMimeTypeHandler);
 		return fileHandler;
+	}
+	
+	@Bean
+	SHA sha() {
+		return new SHA();
 	}
 
 
