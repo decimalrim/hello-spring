@@ -20,9 +20,6 @@ $().ready(function () {
 
           for (var key in errors) {
             // 객체리터럴(errors)의 키가 할당.
-            // console.log(key);
-            // console.log(errors.key);
-            // console.log(errors[key]);
             var errorDiv = $("<div></div>");
             errorDiv.addClass("error");
             // <div class="error"></div> 이것과 같음.
@@ -77,10 +74,16 @@ $().ready(function () {
         // 파라미터 유효성 검사는 패스
         // 이메일이나 패스워드가 잘못된 경우.
         if (errorMessage) {
+          var errorDiv = $("<div></div>");
+          errorDiv.addClass("error");
+          errorDiv.text(errorMessage);
+
+          $("#loginForm").after(errorDiv);
         }
 
         // 정상적으로 로그인에 성공한 경우.
         if (next) {
+          location.href = next;
         }
         /*
         response = {
@@ -89,7 +92,7 @@ $().ready(function () {
               "email": []
             },
             errorMessage: "",
-            next: "/board/"
+            next: "/board/list"
           }
         } */
       }

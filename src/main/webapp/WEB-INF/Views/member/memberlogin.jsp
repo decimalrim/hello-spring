@@ -14,17 +14,6 @@
         row-gap: 10px;
     }
 
-    .validator-fail-email {
-        grid-template-rows: 28px 21px 28px 1fr !important;
-    }
-
-    .validator-fail-password {
-        grid-template-rows: 28px 28px 21px 1fr !important;
-    }
-
-    .validator-fail-both {
-        grid-template-rows: 28px 21px 28px 21px 1fr !important;
-    }
 
     .error {
         grid-column: 1 / -1;
