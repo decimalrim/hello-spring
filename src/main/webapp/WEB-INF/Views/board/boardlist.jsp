@@ -68,7 +68,7 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
                       >
                     </c:if>
                   </td>
-                  <td class="center-align">${board.email}</td>
+                  <td class="center-align">${board.memberVO.name}</td>
                   <td class="center-align">${board.viewCnt}</td>
                   <td class="center-align">${board.crtDt}</td>
                   <td class="center-align">${board.mdfyDt}</td>

@@ -23,8 +23,8 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
       <label for="subject">제목</label>
       <div>${boardVO.subject}</div>
 
-      <label for="email">이메일</label>
-      <div>${boardVO.email}</div>
+      <label for="name">작성자 이름</label>
+      <div>${boardVO.memberVO.name}</div>
 
       <label for="viewCnt">조회수</label>
       <div>${boardVO.viewCnt}</div>
