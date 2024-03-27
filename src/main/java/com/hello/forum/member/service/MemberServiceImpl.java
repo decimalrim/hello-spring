@@ -63,7 +63,7 @@ public class MemberServiceImpl implements MemberService {
 		memberVO.setPassword(password);
 		
 		// 3. DB 에서 암호화된 비밀번호와 이메일을 비교해 회원 정보를 가져온다.
-		MemberVO member = this.memberDao.selectMemberByEmailAndPassword();
+		MemberVO member = this.memberDao.selectMemberByEmailAndPassword(memberVO);
 		
 		// 만약, 회원 정보가 null 이라면 회원 정보가 없는 것이므로 사용자에게 예외를 전달한다.
 		if (member == null) {

@@ -13,6 +13,25 @@
         grid-template-rows: 28px 28px 1fr;
         row-gap: 10px;
     }
+
+    .validator-fail-email {
+        grid-template-rows: 28px 21px 28px 1fr !important;
+    }
+
+    .validator-fail-password {
+        grid-template-rows: 28px 28px 21px 1fr !important;
+    }
+
+    .validator-fail-both {
+        grid-template-rows: 28px 21px 28px 21px 1fr !important;
+    }
+
+    .error {
+        grid-column: 1 / -1;
+        color: #f00;
+        padding-left: 1rem;
+        margin: 0;
+    }
 </style>
 <script type="text/javascript" src="/js/lib/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="/js/memberregist.js"></script>
@@ -23,9 +42,10 @@
         <div class="grid">
             <label for="email">이메일</label>
             <input type="email" name="email" id="email">
-
+            
+       
             <label for="password">비밀번호</label>
-            <input type="password" name="password" id="password">
+            <input type="password" name="password" id="password"> 
 
             <div class="btn-group">
                 <div class="right-align">

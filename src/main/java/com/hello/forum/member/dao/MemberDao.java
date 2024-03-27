@@ -22,7 +22,7 @@ public interface MemberDao {
 
 	public String selectSalt(String email);
 
-	public MemberVO selectMemberByEmailAndPassword();
+	public MemberVO selectMemberByEmailAndPassword(MemberVO memberVO);
 
 
 }
