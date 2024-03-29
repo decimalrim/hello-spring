@@ -107,10 +107,10 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
         <label for="confirmPassword">비밀번호 확인</label>
         <input
-          type="confirmPassword"
           type="password"
           id="confirmPassword"
           name="confirmPassword"
+          value="${memberVO.confirmPassword}"
         />
 
         <div class="btn-group">

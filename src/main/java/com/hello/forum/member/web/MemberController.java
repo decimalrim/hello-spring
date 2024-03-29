@@ -128,7 +128,9 @@ public class MemberController {
 
 	@ResponseBody // ajax
 	@PostMapping("/member/login")
-	public AjaxResponse doLogin(MemberVO memberVO, HttpSession session) {
+	public AjaxResponse doLogin(MemberVO memberVO, HttpSession session, @RequestParam(defaultValue = "/board/list") String nextUrl) {
+		
+		System.out.println("NextUrl: " + nextUrl);
 		
 		// Validation Check (파라미터 유효성 검사)
 		Validator<MemberVO> validator = new Validator<>(memberVO);
@@ -147,12 +149,14 @@ public class MemberController {
 			MemberVO member = this.memberService.getMember(memberVO);
 			// 로그인이 정상적으로 이루어졌다면 세션을 생성한다.
 			session.setAttribute("_LOGIN_USER_", member);
+			// 세션에 로그인 유지시간 : defalt는 30분이다. : 지정은 second로
+			session.setMaxInactiveInterval(30); // 20분
 		} catch (IllegalArgumentException iae) {
 			// 로그인에 실패했다면 화면으로 실패 사유를 보내준다.
 			return new AjaxResponse().append("errorMessage", iae.getMessage());
 		}
 		
-		return new AjaxResponse().append("next", "/board/list");
+		return new AjaxResponse().append("next", nextUrl);
 	}
 	
 	@GetMapping("/member/logout")

@@ -10,15 +10,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hello.forum.bbs.service.BoardService;
 import com.hello.forum.bbs.vo.BoardListVO;
 import com.hello.forum.bbs.vo.BoardVO;
 import com.hello.forum.beans.FileHandler;
+import com.hello.forum.member.vo.MemberVO;
 import com.hello.forum.utils.ValidationUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 //import jakarta.validation.Valid;
 //import jakarta.validation.constraints.NotEmpty;
 
@@ -52,8 +55,11 @@ public class BoardController {
 	 */
 	@GetMapping("/board/write") // 브라우저에서 링크를 클릭, 브라우저 URL을 직접 입력
 	public String viewBoardWritePage() {
+		
 		return "board/boardwrite";
 	}
+	
+	
 	
 	/**
 	 * 스프링 애플리케이션을 개발할 때 같은 URL을 정의할 수 없다.
@@ -87,7 +93,7 @@ public class BoardController {
 			/*@Valid*/ /*@NotEmpty, @Email, @Size, @Min, @Max 이런것들을 검사하도록 지시*/ BoardVO boardVO,
 			/* @Valid에 의해 실행된 파라미터 검사 (NotEmpty, Email, Size, Min, Max 등)의 결과 */
 //			BindingResult bindingResult, (@Valid있을때만 사용)
-			@RequestParam MultipartFile file, Model model) {
+			@RequestParam MultipartFile file, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO, Model model) {
 		
 		System.out.println("글 등록 처리를 해야합니다.");
 		/* Servlet Like
@@ -112,13 +118,14 @@ public class BoardController {
 //			model.addAttribute("boardVO", boardVO);
 //			return "board/boardwrite";
 //		}
-
+		
+		
 		// 수동 검사 시작
 		// 제목 검사
 		boolean isNotEmptySubject = ValidationUtils.notEmpty( boardVO.getSubject());
-		boolean isNotEmptyEmail = ValidationUtils.notEmpty( boardVO.getEmail());
+//		boolean isNotEmptyEmail = ValidationUtils.notEmpty( boardVO.getEmail());
 		boolean isNotEmptyContent = ValidationUtils.notEmpty( boardVO.getContent());
-		boolean isNotEmailFormat = ValidationUtils.email( boardVO.getEmail());
+//		boolean isNotEmailFormat = ValidationUtils.email( boardVO.getEmail());
 		
 		if (! isNotEmptySubject) {
 			// 제목을 입력하지 않았다면
@@ -127,12 +134,12 @@ public class BoardController {
 			return "board/boardwrite";
 		}
 
-		if (! isNotEmptyEmail) {
-			// 이메일을 입력하지 않았다면
-			model.addAttribute("errorMessage", "이메일은 필수 입력 값입니다.");
-			model.addAttribute("boardVO", boardVO);
-			return "board/boardwrite";
-		}
+//		if (! isNotEmptyEmail) {
+//			// 이메일을 입력하지 않았다면
+//			model.addAttribute("errorMessage", "이메일은 필수 입력 값입니다.");
+//			model.addAttribute("boardVO", boardVO);
+//			return "board/boardwrite";
+//		}
 
 		if (! isNotEmptyContent) {
 			// 내용을 입력하지 않았다면
@@ -141,13 +148,16 @@ public class BoardController {
 			return "board/boardwrite";
 		}
 
-		if (! isNotEmailFormat) {
-			// 이메일을 이메일 형태로 입력하지 않았다면
-			model.addAttribute("errorMessage", "이메일을 올바른 형태로 작성해주세요.");
-			model.addAttribute("boardVO", boardVO);
-			return "board/boardwrite";
-		}
-
+//		if (! isNotEmailFormat) {
+//			// 이메일을 이메일 형태로 입력하지 않았다면
+//			model.addAttribute("errorMessage", "이메일을 올바른 형태로 작성해주세요.");
+//			model.addAttribute("boardVO", boardVO);
+//			return "board/boardwrite";
+//		}
+		
+		
+		boardVO.setEmail(memberVO.getEmail());
+		
 		boolean isCreateSuccess = this.boardService.createNewBoard(boardVO, file);
 		if (isCreateSuccess) {
 			System.out.println("글 등록 성공!");
@@ -184,9 +194,13 @@ public class BoardController {
 	}
 
 	@GetMapping("/board/modify/{id}") // /board/modify/1 <-- id 변수의 값은 1
-	public String viewBoardModifyPage(@PathVariable int id, Model model) {
+	public String viewBoardModifyPage(@PathVariable int id, Model model, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
 		// 1. 전달받은 id의 값으로 게시글을 조회한다.
 		BoardVO boardVO = this.boardService.getOneBoard(id, false);
+		
+		if (! memberVO.getEmail().equals(boardVO.getEmail())) {
+			throw new IllegalArgumentException("잘못된 접근입니다.");
+		}
 		
 		// 2. 게시글의 정보를 화면에 보내준다.
 		model.addAttribute("boardVO", boardVO);
@@ -202,25 +216,25 @@ public class BoardController {
 	 * @return
 	 */
 	@PostMapping("/board/modify/{id}")
-	public String doBoardModify(@PathVariable int id, BoardVO boardVO, @RequestParam MultipartFile file, Model model) {
+	public String doBoardModify(@PathVariable int id, BoardVO boardVO,
+			@RequestParam MultipartFile file, Model model, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
 
+		BoardVO originalBoardVO = this.boardService.getOneBoard(id, false);
+		
+		if (! originalBoardVO.getEmail().equals(memberVO.getEmail())) {
+			throw new IllegalArgumentException("잘못된 접근입니다.");
+		}
+		
+		
 		// 수동 검사 시작
 		// 제목 검사
 		boolean isNotEmptySubject = ValidationUtils.notEmpty( boardVO.getSubject());
-		boolean isNotEmptyEmail = ValidationUtils.notEmpty( boardVO.getEmail());
 		boolean isNotEmptyContent = ValidationUtils.notEmpty( boardVO.getContent());
-		boolean isNotEmailFormat = ValidationUtils.email( boardVO.getEmail());
+
 		
 		if (! isNotEmptySubject) {
 			// 제목을 입력하지 않았다면
 			model.addAttribute("errorMessage", "제목은 필수 입력 값입니다.");
-			model.addAttribute("boardVO", boardVO);
-			return "board/boardmodify";
-		}
-		
-		if (! isNotEmptyEmail) {
-			// 이메일을 입력하지 않았다면
-			model.addAttribute("errorMessage", "이메일은 필수 입력 값입니다.");
 			model.addAttribute("boardVO", boardVO);
 			return "board/boardmodify";
 		}
@@ -232,14 +246,8 @@ public class BoardController {
 			return "board/boardmodify";
 		}
 		
-		if (! isNotEmailFormat) {
-			// 이메일을 이메일 형태로 입력하지 않았다면
-			model.addAttribute("errorMessage", "이메일을 올바른 형태로 작성해주세요.");
-			model.addAttribute("boardVO", boardVO);
-			return "board/boardmodify";
-		}
-
-
+		
+		
 		// Command Object 에는 전달된 id가 없으므로
 		// @PathVariable로 전달된 id를 셋팅해준다.
 		boardVO.setId(id);
@@ -269,10 +277,16 @@ public class BoardController {
 	 */
 	
 	@GetMapping("/board/delete/{id}")
-	public String doDeleteBoard(@PathVariable int id) {
+	public String doDeleteBoard(@PathVariable int id, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO) {
 		
 		boolean isDeletedSuccess = this.boardService.deleteOneBoard(id);
 		
+		BoardVO originalBoardVO = this.boardService.getOneBoard(id, false);
+		
+		if (! originalBoardVO.getEmail().equals(memberVO.getEmail())) {
+			throw new IllegalArgumentException("잘못된 접근입니다.");
+		
+		}
 		if(isDeletedSuccess) {
 			System.out.println("게시글 삭제 성공");
 		} else {
@@ -280,6 +294,7 @@ public class BoardController {
 		}
 		
 		return "redirect:/board/list";
+		
 	}
 	
 	@GetMapping("/board/file/download/{id}")

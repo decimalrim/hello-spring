@@ -28,7 +28,7 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         <colgroup>
           <col width="80px" />
           <col width="*" />
-          <%-- *는 다 할당 후 나머지를 다 할당해라라는뜻 --%>
+          <!-- <%-- *는 다 할당 후 나머지를 다 할당해라라는뜻 --%> -->
           <col width="150px" />
           <col width="80px" />
           <col width="150px" />
