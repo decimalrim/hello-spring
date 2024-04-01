@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import com.hello.forum.beans.FileHandler;
 import com.hello.forum.member.service.MemberService;
 import com.hello.forum.member.vo.MemberVO;
 import com.hello.forum.utils.AjaxResponse;
@@ -26,6 +29,8 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MemberController {
+	
+	private Logger logger = LoggerFactory.getLogger(MemberController.class);
 
 	@Autowired
 	private MemberService memberService;
@@ -130,7 +135,7 @@ public class MemberController {
 	@PostMapping("/member/login")
 	public AjaxResponse doLogin(MemberVO memberVO, HttpSession session, @RequestParam(defaultValue = "/board/list") String nextUrl) {
 		
-		System.out.println("NextUrl: " + nextUrl);
+		logger.info("NextUrl: " + nextUrl);
 		
 		// Validation Check (파라미터 유효성 검사)
 		Validator<MemberVO> validator = new Validator<>(memberVO);

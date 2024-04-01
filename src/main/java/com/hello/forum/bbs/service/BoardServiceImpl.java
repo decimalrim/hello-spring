@@ -11,6 +11,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,6 +49,8 @@ import io.github.seccoding.excel.read.ExcelRead;
  */
 @Service
 public class BoardServiceImpl implements BoardService {
+	
+	private Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
 	
 	/*
 	 * 멤버변수 위에 @Autowired을 작성하면
@@ -190,7 +194,8 @@ public class BoardServiceImpl implements BoardService {
 				try {
 					excelFileInputStream = new FileInputStream(storedExcel.getRealFilePath());
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+//					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 				
 				// 2. Apache POI를 활용해서 InputStream의 내용을 엑셀 문서로 읽어온다.
@@ -200,7 +205,7 @@ public class BoardServiceImpl implements BoardService {
 					try {
 						excelWordbook = new XSSFWorkbook(excelFileInputStream);
 					} catch (IOException e) {
-						e.printStackTrace();
+						logger.error(e.getMessage(), e);
 					}
 				}
 				// 엑셀파일의 특정 Sheet 에 있는 모든 데이터를 찾아 List<BoardVO>로 만들어준다.

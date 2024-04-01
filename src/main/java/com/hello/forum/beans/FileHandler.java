@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +28,8 @@ import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
 
 public class FileHandler {
+	
+	private Logger logger = LoggerFactory.getLogger(FileHandler.class);
 	
 	private String baseDir;
 	private boolean enableObfuscation;
@@ -83,7 +87,7 @@ public class FileHandler {
 				try {
 					multipartFile.transferTo(storePath);
 				} catch (IllegalStateException | IOException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 					// 서버의 디스크 용량이 부족할 때!
 					return null;
 				}
@@ -98,9 +102,9 @@ public class FileHandler {
 					try {
 						mimeType = tika.detect(storePath);
 					} catch (IOException e) {
-						System.out.println(mimeType + "파일은 업로드 할 수 없습니다.");
+						logger.info(mimeType + "파일은 업로드 할 수 없습니다.");
 						storePath.delete();
-						e.printStackTrace();
+						logger.error(e.getMessage(), e);
 						return null;
 					}
 					
@@ -111,20 +115,20 @@ public class FileHandler {
 						MagicMatch match = Magic.getMagicMatch(data);
 						mimeType = match.getMimeType();
 					} catch (IOException | MagicParseException | MagicMatchNotFoundException | MagicException e) {
-						System.out.println(mimeType + "파일은 업로드 할 수 없습니다.");
+						logger.info(mimeType + "파일은 업로드 할 수 없습니다.");
 						storePath.delete();
-						e.printStackTrace();
+						logger.error(e.getMessage(), e);
 						return null;
 					}
 				}
 				
 				if (! this.availableFileList.contains(mimeType)) {
 					storePath.delete();
-					System.out.println(mimeType + "파일을 업로드 할 수 없습니다.");
+					logger.info(mimeType + "파일을 업로드 할 수 없습니다.");
 					return null;
 				}
 				
-				System.out.println(mimeType + "파일을 업로드했습니다.");	
+				logger.info(mimeType + "파일을 업로드했습니다.");	
 			}	
 				
 				// 업로드 결과를 반환한다.
@@ -231,7 +235,7 @@ public class FileHandler {
 		try {
 			newFileName = new String(originFileName.getBytes("UTF-8"), "ISO-8859-1");
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		
 		HttpHeaders header = new HttpHeaders();
@@ -242,7 +246,7 @@ public class FileHandler {
 		try {
 			resource = new InputStreamResource(new FileInputStream(downloadFile));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
 		}
 		

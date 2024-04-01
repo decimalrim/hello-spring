@@ -11,12 +11,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,13 +36,11 @@ import com.hello.forum.utils.ValidationUtils;
 
 import io.github.seccoding.excel.option.WriteOption;
 import io.github.seccoding.excel.write.ExcelWrite;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-//import jakarta.validation.Valid;
-//import jakarta.validation.constraints.NotEmpty;
 
 @Controller
 public class BoardController {
+	
+	private Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
 	@Autowired
 	private FileHandler fileHandler;
@@ -110,7 +109,7 @@ public class BoardController {
 //			BindingResult bindingResult, (@Valid있을때만 사용)
 			@RequestParam MultipartFile file, @SessionAttribute("_LOGIN_USER_") MemberVO memberVO, Model model) {
 		
-		System.out.println("글 등록 처리를 해야합니다.");
+		logger.info("글 등록 처리를 해야합니다.");
 		/* Servlet Like
 		 * HttpServletRequest를 이용
 		 * - Interceptor에서 이용
@@ -175,9 +174,9 @@ public class BoardController {
 		
 		boolean isCreateSuccess = this.boardService.createNewBoard(boardVO, file);
 		if (isCreateSuccess) {
-			System.out.println("글 등록 성공!");
+			logger.info("글 등록 성공!");
 		} else {
-			System.out.println("글 등록 실패!");
+			logger.info("글 등록 실패!");
 		}
 
 		// board/boardlist 페이지를 보여주는 URL 로 이동처리.
@@ -270,9 +269,9 @@ public class BoardController {
 		boolean isUpdateSuccess = this.boardService.updateOneBoard(boardVO, file);
 		
 		if (isUpdateSuccess) {
-			System.out.println("수정 성공했습니다!");
+			logger.info("수정 성공했습니다!");
 		} else {
-			System.out.println("수정 실패했습니다!");
+			logger.info("수정 실패했습니다!");
 		}
 		return "redirect:/board/view?id=" + id;
 	}
@@ -303,9 +302,9 @@ public class BoardController {
 		
 		}
 		if(isDeletedSuccess) {
-			System.out.println("게시글 삭제 성공");
+			logger.info("게시글 삭제 성공");
 		} else {
-			System.out.println("게시글 삭제 실패");
+			logger.info("게시글 삭제 실패");
 		}
 		
 		return "redirect:/board/list";
