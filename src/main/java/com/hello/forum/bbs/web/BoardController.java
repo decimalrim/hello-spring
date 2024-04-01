@@ -1,5 +1,16 @@
 package com.hello.forum.bbs.web;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,8 +30,11 @@ import com.hello.forum.bbs.vo.BoardListVO;
 import com.hello.forum.bbs.vo.BoardVO;
 import com.hello.forum.beans.FileHandler;
 import com.hello.forum.member.vo.MemberVO;
+import com.hello.forum.utils.AjaxResponse;
 import com.hello.forum.utils.ValidationUtils;
 
+import io.github.seccoding.excel.option.WriteOption;
+import io.github.seccoding.excel.write.ExcelWrite;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 //import jakarta.validation.Valid;
@@ -316,6 +331,127 @@ public class BoardController {
 		// 첨부된 파일이 있을 경우엔 파일을 사용자에게 보내준다. (Download)
 		return this.fileHandler.download(boardVO.getOriginFileName(), boardVO.getFileName() );
 	}
+	
+	// 엑셀 쓰고 다운 (아래보다 간단한 방법)
+	@GetMapping("/board/excel/download2")
+	public ResponseEntity<Resource> downloadExcelFile2() {
+		BoardListVO boardListVO = boardService.getAllBoard();
+		
+		WriteOption<BoardVO> writeOption = new WriteOption<>();
+		writeOption.setFileName("게시글_목록.xlsx");
+		writeOption.setFilePath("C:\\uploadFiles");
+		writeOption.setContents(boardListVO.getBoardList());
+		
+		File excelFile = ExcelWrite.write(writeOption);
+		
+		return this.fileHandler.download("게시글_목록.xlsx", excelFile.getName());
+	}
+	
+	
+	@GetMapping("/board/excel/download")
+	public ResponseEntity<Resource> downloadExcelFile() {
+		
+		// 모든 게시글 조회
+		BoardListVO boardListVO = boardService.getAllBoard();
+		
+		// XLSX 문서 만들기
+		Workbook workbook = new SXSSFWorkbook(-1);
+		
+		// 엑셀 시트 만들기
+		Sheet sheet = workbook.createSheet("게시글 목록");
+		
+		// 행 만들기
+		Row row = sheet.createRow(0);
+		// 타이틀 만들기
+		Cell cell = row.createCell(0);
+		cell.setCellValue("번호");
+		
+		cell = row.createCell(1);
+		cell.setCellValue("제목");
+		
+		cell = row.createCell(2);
+		cell.setCellValue("첨부파일명");
+		
+		cell = row.createCell(3);
+		cell.setCellValue("작성자이메일");
+		
+		cell = row.createCell(4);
+		cell.setCellValue("조회수");
+		
+		cell = row.createCell(5);
+		cell.setCellValue("등록일");
+		
+		cell = row.createCell(6);
+		cell.setCellValue("수정일");
+		
+		// 데이터 행 만들고 쓰기
+		List<BoardVO> boardList = boardListVO.getBoardList();
+		int rowIndex = 1;
+		
+		for(BoardVO boardVO : boardList) {
+			row = sheet.createRow(rowIndex);
+			cell = row.createCell(0);
+			cell.setCellValue("" + boardVO.getId());
+			
+			cell = row.createCell(1);
+			cell.setCellValue("" + boardVO.getSubject());
+			
+			cell = row.createCell(2);
+			cell.setCellValue("" + boardVO.getOriginFileName());
+			
+			cell = row.createCell(3);
+			cell.setCellValue("" + boardVO.getEmail());
+			
+			cell = row.createCell(4);
+			cell.setCellValue("" + boardVO.getViewCnt());
+			
+			cell = row.createCell(5);
+			cell.setCellValue("" + boardVO.getCrtDt());
+			
+			cell = row.createCell(6);
+			cell.setCellValue("" + boardVO.getMdfyDt());
+			
+			rowIndex += 1;
+		}
+		
+		// 엑셀파일 만들기
+		File storedFile = fileHandler.getStoredFile("게시글_목록.xlsx");
+		OutputStream os = null;
+		try {
+			os = new FileOutputStream(storedFile);
+			workbook.write(os);
+		} catch (IOException e) {
+			throw new IllegalArgumentException("엑셀파일을 만들 수 없습니다.");
+		} finally {
+			try {
+				workbook.close();
+			} catch (IOException e) {}
+			if (os != null) {
+				try {
+					os.flush();
+				} catch (IOException e) {}
+				try {
+					os.close();
+				} catch (IOException e) {}
+			}
+		}
+		
+
+		return this.fileHandler.download("게시글_목록.xlsx", storedFile.getName());
+	}
+	
+	// 엑셀 일괄 등록
+	@ResponseBody
+	@PostMapping("/board/excel/write")
+	public AjaxResponse doExcelUpload(@RequestParam MultipartFile excelFile) {
+		
+		boolean isSuccess = this.boardService.createMassiveBoard2(excelFile);
+		
+		return new AjaxResponse().append("result", isSuccess).append("next" , "/board/list");
+	}
+	
+	
+
 	
 	
 	

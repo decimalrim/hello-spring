@@ -150,7 +150,7 @@ public class MemberController {
 			// 로그인이 정상적으로 이루어졌다면 세션을 생성한다.
 			session.setAttribute("_LOGIN_USER_", member);
 			// 세션에 로그인 유지시간 : defalt는 30분이다. : 지정은 second로
-			session.setMaxInactiveInterval(30); // 20분
+			session.setMaxInactiveInterval(30*60); // 30분
 		} catch (IllegalArgumentException iae) {
 			// 로그인에 실패했다면 화면으로 실패 사유를 보내준다.
 			return new AjaxResponse().append("errorMessage", iae.getMessage());
