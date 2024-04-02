@@ -73,7 +73,7 @@ public class WebConfig implements WebMvcConfigurer {
 				.excludePathPatterns(this.authCheckIgnorePatterns); // 인터셉터가 개입x url
 		
 		registry.addInterceptor(new BlockDuplicateLoginInterceptor()) 
-				.addPathPatterns("/member.login", "/member/regist");
+				.addPathPatterns("/member/login", "/ajax/member/login", "/member/regist", "/ajax/member/regist");
 		
 	}
 

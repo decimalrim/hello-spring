@@ -21,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.hello.forum.exceptions.FileNotExistsException;
+
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicException;
 import net.sf.jmimemagic.MagicMatch;
@@ -247,7 +249,7 @@ public class FileHandler {
 			resource = new InputStreamResource(new FileInputStream(downloadFile));
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage(), e);
-			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
+			throw new FileNotExistsException();
 		}
 		
 		// 사용자에게 다운로드 해준다.

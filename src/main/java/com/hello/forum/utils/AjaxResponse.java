@@ -3,9 +3,12 @@ package com.hello.forum.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.annotations.SerializedName;
+
 public class AjaxResponse {
 	
-	
+	@SerializedName("data")
 	private Map<String, Object> response;
 
 	public AjaxResponse() {

@@ -24,6 +24,22 @@ scanPeriod: 몇 초 주기로 변경 검사를 시행할 것인지 설정 -->
     </encoder>
   </appender> 
   
+  <appender name="TIMING_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>C:/logs/hellospring_timing.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>C:/logs/hellospring_timing.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%-4relative [%thread] %-5level %logger{35} -%kvp- %msg%n</pattern>
+    </encoder>
+  </appender> 
+  
+  <logger name= "timing" level="debug">
+  	<appender-ref ref="TIMING_LOG"/>
+  </logger>
+  r
   <!-- 
   Trace > Debug > Info > Warn > Error
    -->

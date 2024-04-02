@@ -69,7 +69,7 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
         $("#email").on("keyup", function () {
             // 서버에게 사용할 수 있는 이메일인지 확인 받는다.
             $.get(
-                "/member/regist/available",
+                "/ajax/member/regist/available",
                 {email: $(this).val()},
                 function (response) {
                     var available = response.available;

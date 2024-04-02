@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hello.forum.bbs.dao.BoardDao;
@@ -22,6 +23,7 @@ import com.hello.forum.bbs.vo.BoardListVO;
 import com.hello.forum.bbs.vo.BoardVO;
 import com.hello.forum.beans.FileHandler;
 import com.hello.forum.beans.FileHandler.StoredFile;
+import com.hello.forum.exceptions.PageNotFoundException;
 
 import io.github.seccoding.excel.option.ReadOption;
 import io.github.seccoding.excel.read.ExcelRead;
@@ -77,7 +79,8 @@ public class BoardServiceImpl implements BoardService {
 		
 		return boardListVO;
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean createNewBoard(BoardVO boardVO, MultipartFile file) {
 		
@@ -95,9 +98,14 @@ public class BoardServiceImpl implements BoardService {
 		}
 
 		int insertedCount = this.boardDao.insertNewBoard(boardVO);
+		
+		// NumberFormatException이 발생하면 롤백된다! (@Transactional)
+//		Integer.parseInt("safasdfasdfs");
+		
 		return insertedCount > 0;
 		}
-
+	
+	@Transactional
 	@Override
 	public BoardVO getOneBoard(int id, boolean isIncrease) {
 		// 1. 게시글 정보 조회하기
@@ -105,7 +113,7 @@ public class BoardServiceImpl implements BoardService {
 		
 		// 게시글을 조회한 결과가 null 이라면, 잘못된 접근입니다. 예외를 발생시킨다.
 		if (boardVO == null) {
-			throw new IllegalArgumentException("잘못된 접근입니다.");
+			throw new PageNotFoundException();
 		}
 		
 		if (isIncrease) {
@@ -120,7 +128,8 @@ public class BoardServiceImpl implements BoardService {
 		}	
 		return boardVO;
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean updateOneBoard(BoardVO boardVO, MultipartFile file) {
 		
@@ -152,7 +161,8 @@ public class BoardServiceImpl implements BoardService {
 		int updatedCount = this.boardDao.updateOneBoard(boardVO);
 		return updatedCount > 0;
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean deleteOneBoard(int id) {
 		// 기존의 게시글 내용을 확인
@@ -176,7 +186,8 @@ public class BoardServiceImpl implements BoardService {
 		int deletedCount = this.boardDao.deleteOneBoard(id);
 		return deletedCount > 0;
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean createMassiveBoard(MultipartFile excelFile) {
 		
@@ -246,7 +257,8 @@ public class BoardServiceImpl implements BoardService {
 		}
 		return insertedCount > 0 && insertedCount == rowSize -1;
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean createMassiveBoard2(MultipartFile excelFile) {
 		int insertedCount = 0;
