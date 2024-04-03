@@ -1,5 +1,7 @@
 package com.hello.forum.exceptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	
+	private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	
 	/**
 	 * PageNotFoundException 이 발생했을 때, 동작하는 메소드.
 	 * 
@@ -28,6 +32,8 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(PageNotFoundException.class)
 	public Object viewPageNotFoundPage(PageNotFoundException pnfe, Model model) {
+		
+		logger.error(pnfe.getMessage(), pnfe);
 		
 		HttpServletRequest request = RequestUtil.getRequest();
 		String uri = request.getRequestURI();
@@ -52,6 +58,8 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler({FileNotExistsException.class, MakeXlsxFileException.class, AlreadyUseException.class,
 						UserIdentifyNotMatchException.class, RuntimeException.class})
 	public Object viewErrorPage(RuntimeException re, Model model) {
+		
+		logger.error(re.getMessage(), re);
 		
 		HttpServletRequest request = RequestUtil.getRequest();
 		String uri = request.getRequestURI();
