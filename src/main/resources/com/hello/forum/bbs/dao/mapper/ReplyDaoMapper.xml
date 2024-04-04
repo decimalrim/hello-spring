@@ -10,6 +10,7 @@
 		<association property="memberVO" javaType="com.hello.forum.member.vo.MemberVO">
 			<id column="EMAIL" property="email" />
 			<result column="NAME" property="name" />
+			<result column="M_DEL_YN" property="delYn" />
 		</association>
 	</resultMap>
 	
@@ -19,12 +20,13 @@
 			 , R.BOARD_ID
 			 , R.EMAIL
 			 , R.CONTENT
-			 , R.CRT_DT
-			 , R.MDFY_DT
+			 , TO_CHAR(R.CRT_DT, 'YYYY-MM-DD') CRT_DT
+			 , TO_CHAR(R.MDFY_DT, 'YYYY-MM-DD') MDFY_DT
 			 , R.RECOMMEND_CNT
 			 , R.PARENT_REPLY_ID
 			 , R.DEL_YN
 			 , M.NAME
+			 , M.DEL_YN M_DEL_YN
 		  FROM REPLIES R
 		 INNER JOIN BOARD B
 		    ON R.BOARD_ID = B.ID
@@ -40,15 +42,15 @@
 			 , R.BOARD_ID
 			 , R.EMAIL
 			 , R.CONTENT
-			 , R.CRT_DT
-			 , R.MDFY_DT
+			 , TO_CHAR(R.CRT_DT, 'YYYY-MM-DD') CRT_DT
+			 , TO_CHAR(R.MDFY_DT, 'YYYY-MM-DD') MDFY_DT
 			 , R.RECOMMEND_CNT
 			 , R.PARENT_REPLY_ID
 			 , R.DEL_YN
 			 , M.NAME
 		  FROM REPLIES R
 		 INNER JOIN BOARD B
-		    ON R.BOARD_ID = B.ID
+		    ON R.BOARD_ID = R.BOARD_ID
 		 INNER JOIN MEMBERS M
 		    ON R.EMAIL = M.EMAIL
 		 WHERE R.REPLY_ID = #{_parameter}

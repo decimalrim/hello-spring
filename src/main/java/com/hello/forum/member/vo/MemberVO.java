@@ -6,7 +6,7 @@ public class MemberVO {
 	private String name;
 	private String password;
 	private String confirmPassword;
-	private String del_yn;
+	private String delYn;
 	private String salt;
 	
 	// getter / setter 단축키
@@ -36,11 +36,15 @@ public class MemberVO {
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
-	public String getDel_yn() {
-		return del_yn;
+
+	
+	
+
+	public String getDelYn() {
+		return delYn;
 	}
-	public void setDel_yn(String del_yn) {
-		this.del_yn = del_yn;
+	public void setDelYn(String delYn) {
+		this.delYn = delYn;
 	}
 	public String getSalt() {
 		return salt;

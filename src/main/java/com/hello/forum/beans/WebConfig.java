@@ -63,7 +63,7 @@ public class WebConfig implements WebMvcConfigurer {
 //		List<String> excludePatterns = new ArrayList<>();
 //		excludePatterns.add("/member/regist/**");
 //		excludePatterns.add("/member/login");
-//		excludePatterns.add("/board/list");
+//		excludePatterns.add("/board/search");
 //		excludePatterns.add("/js/**");
 //		excludePatterns.add("/css/**");
 //		excludePatterns.add("/error/**");

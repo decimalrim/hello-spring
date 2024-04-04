@@ -6,6 +6,8 @@ import com.hello.forum.bbs.vo.ReplyVO;
 
 public interface ReplyDao {
 	
+	public String NAME_SPACE = "com.hello.forum.bbs.dao.ReplyDao";
+	
 	/**
 	 * 게시글의 모든 댓글을 조회한다.
 	 * @param board 조회할 게시글의 번호

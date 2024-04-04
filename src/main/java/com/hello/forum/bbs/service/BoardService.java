@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hello.forum.bbs.vo.BoardListVO;
 import com.hello.forum.bbs.vo.BoardVO;
+import com.hello.forum.bbs.vo.SearchBoardVO;
 
 public interface BoardService {
 	
@@ -11,6 +12,8 @@ public interface BoardService {
 	 * 게시글의 목록과 게시글의 건수를 모두 조회한다.
 	 */
 	public BoardListVO getAllBoard();
+	
+	public BoardListVO searchAllBoard(SearchBoardVO searchBoardVO);
 	
 	/**
 	 * 새로운 게시글을 등록한다.

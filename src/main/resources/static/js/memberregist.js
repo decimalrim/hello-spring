@@ -93,7 +93,7 @@ $().ready(function () {
               "email": []
             },
             errorMessage: "",
-            next: "/board/list"
+            next: "/board/search"
           }
         } */
       }

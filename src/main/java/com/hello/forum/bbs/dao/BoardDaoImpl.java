@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hello.forum.bbs.vo.BoardVO;
+import com.hello.forum.bbs.vo.SearchBoardVO;
 
 /*
  * DB에 쿼리를 전송 및 실행하고 결과를 받아오는 클래스.
@@ -53,6 +54,12 @@ public class BoardDaoImpl extends SqlSessionDaoSupport implements BoardDao {
 	@Override
 	public List<BoardVO> getAllBoard() {
 		return getSqlSession().selectList(BoardDao.NAME_SPACE + ".getAllBoard");
+	}
+	
+	// pagination
+	@Override
+	public List<BoardVO> searchAllBoard(SearchBoardVO searchBoardVO) {
+		return getSqlSession().selectList(BoardDao.NAME_SPACE + ".searchAllBoard", searchBoardVO);
 	}
 
 

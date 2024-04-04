@@ -133,7 +133,7 @@ public class MemberController {
 
 	@ResponseBody // ajax
 	@PostMapping("/ajax/member/login")
-	public AjaxResponse doLogin(MemberVO memberVO, HttpSession session, @RequestParam(defaultValue = "/board/list") String nextUrl) {
+	public AjaxResponse doLogin(MemberVO memberVO, HttpSession session, @RequestParam(defaultValue = "/board/search") String nextUrl) {
 		
 		logger.info("NextUrl: " + nextUrl);
 		
@@ -163,7 +163,7 @@ public class MemberController {
 		// Logout 처리.
 		// SessionID로 전달된 세션의 모든 정보를 삭제.
 		session.invalidate();
-		return "redirect:/board/list";
+		return "redirect:/board/search";
 	}
 	
 	@ResponseBody

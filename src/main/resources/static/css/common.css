@@ -139,3 +139,22 @@ div.replies > .reply-items {
 pre.content {
   margin: 0px;
 }
+
+/***************************Pagination 시작*********************************/
+
+ul.page-nav {
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+}
+
+ul.page-nav > li {
+  display: inline-block;
+  padding: 10px;
+  color: #333;
+}
+
+ul.page-nav > li.active > a {
+  color: #f00;
+  font-weight: bold;
+}

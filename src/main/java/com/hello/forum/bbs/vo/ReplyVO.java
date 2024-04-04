@@ -8,7 +8,7 @@ public class ReplyVO {
 	private int replyId;
 	private int boardId;
 	private String email;
-	private String content ;
+	private String content;
 	private String crtDt;
 	private String mdfyDt;
 	private int recommendCnt;

@@ -168,7 +168,7 @@
 	c.h.f.b.w.BoardController:
 	{GET [/board/modify/{id}]}: viewBoardModifyPage(int,Model,MemberVO)
 	{GET [/board/view]}: viewBoardDetailPage(int,Model)
-	{GET [/board/list]}: viewBoardListPage(Model)
+	{GET [/board/search]}: viewBoardListPage(Model)
 	{GET [/board/write]}: viewBoardWritePage()
 	{POST [/board/write]}: doBoardWrite(BoardVO,MultipartFile,MemberVO,Model)
 	{POST [/board/modify/{id}]}: doBoardModify(int,BoardVO,MultipartFile,Model,MemberVO)
@@ -1719,7 +1719,7 @@ Unconditional classes:
 1673 [restartedMain] DEBUG o.s.b.f.s.DefaultListableBeanFactory -- Autowiring by type from bean name 'requestMappingHandlerMapping' via factory method to bean named 'mvcResourceUrlProvider'
 1702 [restartedMain] DEBUG _.s.w.s.HandlerMapping.Mappings -- 
 	c.h.f.b.w.BoardController:
-	{GET [/board/list]}: viewBoardListPage(Model)
+	{GET [/board/search]}: viewBoardListPage(Model)
 	{GET [/board/write]}: viewBoardWritePage()
 	{POST [/board/write]}: doBoardWrite(BoardVO,MultipartFile,MemberVO,Model)
 	{GET [/board/view]}: viewBoardDetailPage(int,Model)
