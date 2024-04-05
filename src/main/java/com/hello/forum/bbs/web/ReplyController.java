@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.hello.forum.bbs.service.ReplyService;
 import com.hello.forum.bbs.vo.ReplyVO;
+import com.hello.forum.common.vo.PaginateVO;
 import com.hello.forum.member.vo.MemberVO;
 import com.hello.forum.utils.AjaxResponse;
 
@@ -25,11 +26,9 @@ public class ReplyController {
 	
 	@GetMapping("/ajax/board/reply/{boardId}")
 	public AjaxResponse getAllReplies (@PathVariable int boardId) {
+		
 		List<ReplyVO> replyList = this.replyService.getAllReplies(boardId);
 		
-		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("count", replyList.size());
-		resultMap.put("replies", replyList);
 		return new AjaxResponse().append("count", replyList.size()).append("replies", replyList);
 	}
 	

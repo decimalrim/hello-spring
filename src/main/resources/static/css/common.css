@@ -158,3 +158,23 @@ ul.page-nav > li.active > a {
   color: #f00;
   font-weight: bold;
 }
+
+/***************************검색 부분*********************************/
+
+form#search-form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+form#search-form > ul.page-nav {
+  flex-grow: 1;
+}
+
+form#search-form > * {
+  margin-right: 0.5rem;
+  white-space: nowrap;
+}
+
+form#search-form > *:last-child {
+  margin-right: 0;
+}

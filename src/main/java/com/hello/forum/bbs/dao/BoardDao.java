@@ -18,6 +18,13 @@ public interface BoardDao {
 	 */
 	public int getBoardAllCount();
 	
+	/**
+	 * 검색어에 대응
+	 * @param searchBoardVO
+	 * @return
+	 */
+	public int searchBoardAllCount(SearchBoardVO searchBoardVO);
+	
 	/*
 	 * DB에 저장된 모든 게시글의 정보를 조회
 	 * (SELECT * FROM BOARD WHERE DEL_YN = 'N';)

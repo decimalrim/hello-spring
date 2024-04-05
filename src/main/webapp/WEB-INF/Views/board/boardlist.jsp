@@ -10,7 +10,7 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
       div.grid {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 28px 28px 1fr 28px 28px;
+        grid-template-rows: 28px 28px 1fr auto 28px;
         row-gap: 10px;
       }
     </style>
@@ -92,16 +92,54 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
       <!-- Pagination 시작 -->
       <div>
-        <div>
+        <form id="search-form">
+          <input type="hidden" id="page-no" name="pageNo" value="0">
+          <select id="list-size" name="listSize">
+            <option value="10" ${searchBoardVO.listSize eq 10 ? 'selected' : ''}>10개</option>
+            <option value="20" ${searchBoardVO.listSize eq 20 ? 'selected' : ''}>20개</option>
+            <option value="30" ${searchBoardVO.listSize eq 30 ? 'selected' : ''}>30개</option>
+            <option value="50" ${searchBoardVO.listSize eq 50 ? 'selected' : ''}>50개</option>
+            <option value="100" ${searchBoardVO.listSize eq 100 ? 'selected' : ''}>100개</option>
+          </select>
+
+          <select name="searchType" id="search-type">
+            <option value="title" ${searchBoardVO.searchType eq 'title' ? 'selected' : ''}>제목</option>
+            <option value="content" ${searchBoardVO.searchType eq 'content' ? 'selected' : ''}>내용</option>
+            <option value="title_content" ${searchBoardVO.searchType eq 'title_content' ? 'selected' : ''}>제목 + 내용</option>
+            <option value="email" ${searchBoardVO.searchType eq 'email' ? 'selected' : ''}>작성자</option>
+          </select>
+
+          <input type="text" name="searchKeyword" value="${searchBoardVO.searchKeyword}">
+          <button type="button" id="search-btn">검색</button>
+          <button type="button" id="cancel-search-btn">초기화</button>
+
           <ul class="page-nav">
+            <c:if test="${searchBoardVO.hasPreGroup}">
+              <li>
+                <a href="javascript:search(0);">처음</a>
+              </li>
+              <li>
+                <a href="javascript:search(${searchBoardVO.preGroupStartPageNo});">이전</a>
+              </li>
+            </c:if>
             <!-- Page 번호를 반복하여 노출한다. -->
-            <c:forEach begin="1" end="${searchBoardVO.pageCount}" step="1" var="p">
-              <li class="${searchBoardVO.pageNo eq p-1 ? 'active' : ''}">
-                <a href="/board/search?pageNo=${p-1}&listSize=10">${p}</a>
+            <c:forEach begin ="${searchBoardVO.groupStartPageNo}"
+                          end="${searchBoardVO.groupEndPageNo}" step="1" var="p">
+              <li class="${searchBoardVO.pageNo eq p ? 'active' : ''}">
+                <a href="javascript:search(${p});">${p+1}</a>
               </li>
             </c:forEach>
+
+            <c:if test="${searchBoardVO.hasNextGroup}">
+              <li>
+                <a href="javascript:search(${searchBoardVO.nextGroupStartPageNo});">다음</a>
+              </li>
+              <li>
+                <a href="javascript:search(${searchBoardVO.pageCount - 1});">마지막</a>
+              </li>
+            </c:if>
           </ul>
-        </div>
+        </form>
       </div>
 
 

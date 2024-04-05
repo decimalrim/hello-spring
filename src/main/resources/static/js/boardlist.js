@@ -1,4 +1,17 @@
 $().ready(function () {
+  // list-size 바뀌면 맨 처음 페이지로 가라
+  $("#list-size").on("change", function () {
+    search(0);
+  });
+
+  $("#search-btn").on("click", function () {
+    search(0);
+  });
+
+  $("#cancel-search-btn").on("click", function () {
+    location.href = "/board/search";
+  });
+
   $("#uploadExcelfile").on("click", function () {
     $("#excelfile").click();
   });
@@ -30,7 +43,10 @@ $().ready(function () {
       processData: false,
       contentType: false,
       success: function (response) {
-        console.log(response);
+        var data = response.data;
+        if (data.result && data.next) {
+          location.href = data.next;
+        }
       },
     });
   });

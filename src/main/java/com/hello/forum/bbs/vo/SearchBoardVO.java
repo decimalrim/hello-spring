@@ -1,50 +1,32 @@
 package com.hello.forum.bbs.vo;
 
-public class SearchBoardVO {
+import com.hello.forum.common.vo.PaginateVO;
+
+public class SearchBoardVO extends PaginateVO {
 	
-	/**
-	 * 검색할 페이지(블록)번호
-	 */
-	private int pageNo;
+	private String searchType;
 	
-	/**
-	 * 한 목록(블록)에 노출시킬 게시글의 개수
-	 */
-	private int listSize;
-	
-	/**
-	 * 생성할 최대 페이지의 수
-	 */
-	private int pageCount;
+	private String searchKeyword;
+
+	public String getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
+	}
+
+	public String getSearchKeyword() {
+		return searchKeyword;
+	}
+
+	public void setSearchKeyword(String searchKeyword) {
+		this.searchKeyword = searchKeyword;
+	}
+
+
 
 	
-	public SearchBoardVO() {
-		this.listSize = 10;
-	}
-	
-	public int getPageNo() {
-		return pageNo;
-	}
-
-	public void setPageNo(int pageNo) {
-		this.pageNo = pageNo;
-	}
-
-	public int getListSize() {
-		return listSize;
-	}
-
-	public void setListSize(int listSize) {
-		this.listSize = listSize;
-	}
-
-	public int getPageCount() {
-		return pageCount;
-	}
-
-	public void setPageCount(int listCount) {
-		this.pageCount = (int) Math.ceil((double) listCount / this.listSize);
-	}
 	
 	
 
