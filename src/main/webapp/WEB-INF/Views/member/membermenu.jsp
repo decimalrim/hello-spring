@@ -13,6 +13,10 @@ pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
       </c:when>
       <c:otherwise>
         <li style="margin-right: 1rem">
+          <c:if test="${sessionScope._LOGIN_USER_.adminYn eq 'Y'}">
+            <span>(Super Admin)</span>
+          </c:if>
+          <!-- 현재 로그인된 사용자 -->
           ${sessionScope._LOGIN_USER_.name} (<span id="login-email"
             >${sessionScope._LOGIN_USER_.email}</span
           >)

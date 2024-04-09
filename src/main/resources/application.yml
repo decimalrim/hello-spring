@@ -28,7 +28,8 @@ mybatis:
 app:
     authentication:
         check-url-pattern: /**
-        ignore-url-patterns: 
+        ignore-url-patterns:
+          /ajax/menu/list,
           /member/login,
           /ajax/member/login,
           /member/regist/**,

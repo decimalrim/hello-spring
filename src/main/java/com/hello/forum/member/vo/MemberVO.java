@@ -8,6 +8,7 @@ public class MemberVO {
 	private String confirmPassword;
 	private String delYn;
 	private String salt;
+	private String adminYn;
 	
 	// getter / setter 단축키
     // alt + shift + s -> r -> Alt + a -> Alt + r
@@ -52,6 +53,13 @@ public class MemberVO {
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
+	public String getAdminYn() {
+		return adminYn;
+	}
+	public void setAdminYn(String adminYn) {
+		this.adminYn = adminYn;
+	}
+	
 	
 	
 	
